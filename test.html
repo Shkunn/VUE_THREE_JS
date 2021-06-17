@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<HTML>
+    <HEAD>
+    <!--SCRIPTS FOR LIBRARIES-->
+    </HEAD>
+ 
+    <BODY>
+    
+    <!--X, Y, Z INPUT-->
+    <!--SUBMIT BUTTON-->
+    <!--DIV CONTAINER FOR OUTPUT-->
+    
+        <SCRIPT>
+        
+        // DECLARE VARIABLES
+        var scene, 
+            renderer, 
+            camera, 
+            light, 
+            controls ;
+        var geometry, 
+            material, 
+            mesh ;
+        
+        // INITIALIZE DATA
+        init() ;
+        animate() ;
+        
+        function init() {
+            // DIMENSIONS
+            // SCENE
+            // RENDERER
+            // MOUNT RENDER 
+            // CAMERA
+            // LIGHT
+            // ORBIT CONTROLS
+        }
+        
+        function animate() {
+            requestAnimationFrame( animate ) ;
+            update() ;
+            render() ;
+        }
+        
+        function update() {
+            controls.update()
+        }
+            
+        function render() {
+            renderer.render( scene, camera ) ;
+        }
+        
+        function submit() {
+            // SUBMIT BUTTON CALLBACK
+        }
+        
+        function addpoints() {
+            // ADD DATA POINTS TO SCENE    
+        }
+        
+        function grab_float_data( input_id ) {
+            // PARSING INPUT DATA
+        }
+        
+        </SCRIPT>
+    </BODY>
+</HTML>
+
+Complete Code
+Here is the complete code. This works using Chrome on Windows. I was not able to figure out how to make it work on Chrome or Firefox on Ubuntu. There’s some experimental settings you have to fiddle with or something.
+
+Your first impression might be, “I just want to put dots in space, why do I have to worry about cameras and lights?” Fortunately, most of this stuff works pretty intuitively, and the THREE.js documentation is excellent. 
+Here’s the four-inch paint brush version of what’s going on: your stuff goes into a scene. You set up lights to see your stuff through a camera. Instead of developing the film in the camera, you render it. 
+Your stuff is described by a geometry, which is a shape, and a material, which describes a surface. Put the geometry and the material together and WHAMMO, you get a mesh that you can put in the aforementioned scene. <br>
+
+<!DOCTYPE HTML>
+<HTML>
+    <HEAD>
+        <SCRIPT src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></SCRIPT>
+        <SCRIPT src="https://rawgithub.com/mrdoob/three.js/master/build/three.js"></SCRIPT>
+        <SCRIPT src="http://threejs.org/examples/js/controls/OrbitControls.js"></SCRIPT>
+    </HEAD>
+    
+    <BODY>
+    
+        X:
+        <INPUT ID="X" TYPE="TEXT"><BR>
+        Y:
+        <INPUT ID="Y" TYPE="TEXT"><BR>
+        Z:
+        <INPUT ID="Z" TYPE="TEXT"><BR>
+        
+        <BUTTON TYPE="BUTTON" ONCLICK="submit()">Submit</BUTTON>
+        <DIV ID="container"></DIV>
+        
+        <SCRIPT>
+            
+            var scene,
+                renderer,
+                camera,
+                light,
+                controls ;
+            var geometry,
+                material,
+                mesh ;
+            
+            init() ;
+            animate() ;
+            
+            function init() {
+            
+                // DIMENSIONS
+                var WIDTH = 500, HEIGHT = 500 ;
+            
+                // SCENE
+                scene = new THREE.Scene();  
+            
+                // RENDERER
+                renderer = new THREE.WebGLRenderer() ;
+                renderer.setSize( WIDTH, HEIGHT ) ;
+                renderer.setClearColor( 0xDDDDDD, 1 ) ;
+                renderer.clear() ;
+                
+                // MOUNT RENDER
+                // this attaches the rendered scene to the <DIV> element
+                container = document.getElementById('container') ;
+                container.appendChild( renderer.domElement ) ;
+                
+                // CAMERA
+                // if points disappear in the distance, then increase FAR
+                var VIEW_ANGLE = 75, 
+                    ASPECT = WIDTH / HEIGHT, 
+                    NEAR = 0.1, FAR = 1000000;
+                camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
+                camera.position.set( 0, 100, 0 );
+                scene.add( camera ) ; 
+                
+                // LIGHT
+                light = new THREE.PointLight( 0xFFFFFF );
+                light.position.set( 0, 100, 100 ) ;
+                scene.add( light );    
+                
+                // CONTROLS
+                controls = new THREE.OrbitControls( camera, renderer.domElement ) ;
+            
+            }
+            
+            function animate() {
+                requestAnimationFrame( animate ) ;
+                update() ;
+                render() ;
+            }
+            
+            function update() {
+                controls.update()
+            }
+                
+            function render() {
+                renderer.render( scene, camera ) ;
+            }
+            
+            function submit() {
+                addpoints() ; 
+                update() ;
+                render() ;
+            }
+            
+            function addpoints() {
+            
+                // grab data from the INPUT elements
+                var x = grab_float_data( "X" ) ;
+                var y = grab_float_data( "Y" ) ;
+                var z = grab_float_data( "Z" ) ;
+            
+                // loop through the points and add them to the scene
+                for( var i=0 ; i < z.length ; i++ ) {
+            
+                    // geometry describes the shape
+                    geometry = new THREE.SphereGeometry( 10, 10, 1) ;
+            
+                    // material describes the surface of the shape
+                    material = new THREE.MeshLambertMaterial( { color:0x00CCFF } ) ;
+            
+                    // mesh maps the material onto the geometry to make an object  
+                    mesh = new THREE.Mesh( geometry, material ) ;
+            
+                    // position the mesh in space
+                    mesh.position.set( x[i], y[i], z[i] ) ;
+            
+                    // add the mesh to the scene
+                    scene.add( mesh ) ;
+                }
+            }
+            
+            function grab_float_data( input_id ) {
+                
+                // grab the input data and split it by whitespace
+                var val = document.getElementById( input_id ).value.split(" ") ;
+                var output = new Array() ;
+            
+                // loop through the values and convert them to floating point numbers
+                for( var i = 0 ; i < val.length ; i++) {
+                    output.push( parseFloat( val[i] ) ) ;
+                }
+                return output ;
+            }
+        
+        </SCRIPT>
+    
+    </BODY>
+ 
+</HTML>

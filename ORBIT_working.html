@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>ORBIT working app</title>
+        <style>
+            body { margin: 0; }
+            canvas { width: 100%; height: 100% }
+        </style>
+    </head>
+
+    <body>
+        <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script>
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+            // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+
+            // var material = new THREE.MeshBasicMaterial( {color: 0xf18c41, wireframe: true} );
+            // var cube = new THREE.Mesh( geometry, material );
+            // scene.add( cube );
+
+            camera.position.z = 5;
+
+            const vertices = [];
+
+            for ( let i = 0; i < 10000; i ++ ) 
+            {
+                const x = THREE.MathUtils.randFloatSpread( 2000 );
+                const y = THREE.MathUtils.randFloatSpread( 2000 );
+                const z = THREE.MathUtils.randFloatSpread( 2000 );
+
+                vertices.push( x, y, z );
+                
+                var myObj = { x : x, y : y, z : z };
+                console.log(myObj);
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+            const material = new THREE.PointsMaterial( { color: 0xf18c41 } );
+
+            const points = new THREE.Points( geometry, material );
+
+            scene.add( points );
+
+
+            var animate = function () {
+                requestAnimationFrame( animate );
+
+                // points.rotation.x += 0.01;
+                // points.rotation.y += 0.005;
+
+                renderer.render( scene, camera );
+            };
+
+            animate();
+        </script>
+    </body>
+</html>
